@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KoreVol — From Regulation to Execution</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:           #080909;
+      --bg-2:         #0f1012;
+      --bg-3:         #141618;
+      --border:       #1c1f22;
+      --border-light: #252830;
+      --text:         #ebebea;
+      --text-muted:   #6b7280;
+      --text-dim:     #3a3f48;
+      --accent:       #b8ff57;
+      --accent-blue:  #3b6bff;
+      --accent-dim:   rgba(184,255,87,0.08);
+      --mono:         'DM Mono', monospace;
+      --serif:        'Fraunces', serif;
+      --sans:         'Manrope', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); }
+
+    /* ── TYPOGRAPHY ── */
+    .display-serif {
+      font-family: var(--serif);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1.0;
+    }
+    .mono {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .mono-accent {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* ── LAYOUT ── */
+    .section-xl  { padding: 8rem 0; }
+    .section-lg  { padding: 6rem 0; }
+    .section-md  { padding: 4rem 0; }
+
+    /* ── DIVIDERS ── */
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── NAV ── */
+    .kore-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(8,9,9,0.88);
+      backdrop-filter: blur(12px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .kore-nav .logo {
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .kore-nav .logo span {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.3rem 0.65rem;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg-3); }
+    .nav-cta {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 0.45rem 1.1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 1.5rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: 0.35;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 30%, transparent 90%);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid var(--border-light);
+      border-radius: 100px;
+      padding: 0.3rem 0.8rem 0.3rem 0.45rem;
+      margin-bottom: 2.5rem;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(3.5rem, 9vw, 9rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      max-width: 1000px;
+      margin-bottom: 2rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.65;
+      margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 1rem; }
+    .btn-primary-kore {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 0.75rem 1.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-primary-kore:hover { opacity: 0.85; color: var(--bg); }
+    .btn-ghost-kore {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border-light);
+      padding: 0.75rem 1.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost-kore:hover { color: var(--text); border-color: var(--text-muted); }
+    .hero-stats {
+      position: absolute;
+      right: 1.5rem;
+      bottom: 5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: right;
+    }
+    .hero-stat-item { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.06em; }
+    .hero-stat-item strong { color: var(--text-muted); font-weight: 400; }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 0.75rem 0;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0 2.5rem;
+      border-right: 1px solid var(--border);
+    }
+    .ticker-item span { color: var(--accent); }
+
+    /* ── SECTION HEADER ── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 18px; height: 1px;
+      background: var(--text-dim);
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--text);
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+
+    /* ── PROBLEM ── */
+    .problem-table { width: 100%; border-collapse: collapse; }
+    .problem-table th {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0 1rem 1rem 0;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .problem-table td {
+      padding: 1.25rem 1rem 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .problem-table td:first-child { color: var(--text); font-weight: 400; }
+    .problem-table .consequence { color: #ff6b6b; font-size: 0.85rem; }
+
+    /* ── PLATFORM MODULES ── */
+    .module-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.75rem;
+      background: var(--bg-2);
+      height: 100%;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .module-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .module-card:hover { border-color: var(--border-light); background: var(--bg-3); }
+    .module-card:hover::after { transform: scaleX(1); }
+    .module-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(184,255,87,0.15);
+      padding: 0.2rem 0.55rem;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    .module-name {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
+    }
+    .module-desc {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    .module-features {
+      list-style: none;
+      padding: 0;
+    }
+    .module-features li {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      padding: 0.3rem 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .module-features li::before { content: '→'; color: var(--text-dim); }
+
+    /* ── HOW IT WORKS ── */
+    .step-item {
+      display: grid;
+      grid-template-columns: 3rem 1fr;
+      gap: 1.5rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-num {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      padding-top: 0.2rem;
+    }
+    .step-content h4 {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .step-content p {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── VIDEO PLACEHOLDER ── */
+    .video-placeholder {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      aspect-ratio: 16/9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(184,255,87,0.04), transparent);
+    }
+    .play-btn {
+      width: 56px; height: 56px;
+      border: 1px solid var(--border-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .play-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+    .play-btn svg { fill: var(--text-muted); margin-left: 3px; }
+    .video-label { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* ── SOLUTIONS ── */
+    .solution-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2rem;
+      background: var(--bg-2);
+      height: 100%;
+      transition: border-color 0.2s;
+    }
+    .solution-card:hover { border-color: var(--border-light); }
+    .solution-vertical {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.8rem;
+    }
+    .solution-title {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .solution-pain {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+    }
+    .solution-modules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .solution-modules span {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(184,255,87,0.2);
+      padding: 0.18rem 0.5rem;
+      border-radius: 3px;
+    }
+    .solution-tam {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .solution-tam .tam-val {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--text);
+    }
+    .solution-tam .tam-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── MARKETPLACE ── */
+    .market-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .market-row:hover { background: var(--bg-2); margin: 0 -1.5rem; padding: 1.25rem 1.5rem; }
+    .market-name { font-size: 0.95rem; font-weight: 400; color: var(--text); margin-bottom: 0.2rem; }
+    .market-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .market-tag {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 0.12rem 0.4rem;
+      border-radius: 3px;
+    }
+    .market-acv {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      white-space: nowrap;
+      text-align: right;
+    }
+    .market-score {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      text-align: right;
+    }
+
+    /* ── STATS BAR ── */
+    .stat-block {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid var(--border);
+    }
+    .stat-block:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 4vw, 3.5rem);
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .stat-num em { font-style: normal; color: var(--accent); }
+    .stat-desc {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── PRICING ── */
+    .price-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2rem;
+      background: var(--bg-2);
+      height: 100%;
+    }
+    .price-card.featured {
+      border-color: var(--accent);
+      background: var(--bg-3);
+    }
+    .price-tier {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }
+    .price-amount {
+      font-family: var(--serif);
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .price-period {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+    }
+    .price-features {
+      list-style: none;
+      padding: 0;
+      border-top: 1px solid var(--border);
+      padding-top: 1.25rem;
+    }
+    .price-features li {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      padding: 0.45rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .price-features li::before { content: '—'; color: var(--text-dim); font-family: var(--mono); }
+    .price-features li.included { color: var(--text); }
+    .price-features li.included::before { content: '✓'; color: var(--accent); font-family: var(--mono); }
+
+    /* ── IMAGE PLACEHOLDER ── */
+    .img-placeholder {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--text-dim);
+      position: relative;
+      overflow: hidden;
+    }
+    .img-placeholder .inner-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .img-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(184,255,87,0.03));
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 8rem 1.5rem;
+      text-align: center;
+    }
+    .cta-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      color: var(--text);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .cta-title em { font-style: italic; color: var(--accent); }
+
+    /* ── FOOTER ── */
+    .kore-footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 1.5rem;
+    }
+    .footer-logo {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .footer-logo span {
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+    .footer-links {
+      list-style: none;
+      padding: 0;
+    }
+    .footer-links li {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .footer-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── FADE-IN ANIMATIONS ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-up-delay-1 { transition-delay: 0.1s; }
+    .fade-up-delay-2 { transition-delay: 0.2s; }
+    .fade-up-delay-3 { transition-delay: 0.3s; }
+    .fade-up-delay-4 { transition-delay: 0.4s; }
+    .fade-up-delay-5 { transition-delay: 0.5s; }
+
+    /* ── HERO TERMINAL ── */
+    .hero-terminal {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      line-height: 1.9;
+      color: var(--text-dim);
+      max-width: 460px;
+    }
+    .hero-terminal .t-line-accent { color: var(--accent); }
+    .hero-terminal .t-line-muted  { color: var(--text-muted); }
+    .hero-terminal .cursor {
+      display: inline-block;
+      width: 7px; height: 13px;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: -2px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero-stats { display: none; }
+      .nav-links { display: none; }
+      .section-xl { padding: 5rem 0; }
+      .section-lg { padding: 4rem 0; }
+      .stat-block { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+
+    /* ── CONTAINER MAX ── */
+    .container-kore { max-width: 1160px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-2);
+    }
+    .compare-table th.kore { color: var(--accent); }
+    .compare-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.83rem;
+      font-weight: 300;
+      color: var(--text-muted);
+    }
+    .compare-table td:first-child { color: var(--text); font-weight: 400; }
+    .compare-table .yes { color: var(--accent); font-family: var(--mono); font-size: 0.75rem; }
+    .compare-table .no  { color: var(--text-dim); font-family: var(--mono); font-size: 0.75rem; }
+    .compare-table .partial { color: #f59e0b; font-family: var(--mono); font-size: 0.75rem; }
+
+    /* ── QUOTE ── */
+    .pull-quote {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      border-left: 2px solid var(--accent);
+      padding-left: 2rem;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<nav class="kore-nav">
+  <a href="#" class="logo"><span></span>KoreVol</a>
+  <ul class="nav-links">
+    <li><a href="#platform">Platform</a></li>
+    <li><a href="#solutions">Solutions</a></li>
+    <li><a href="#marketplace">Marketplace</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Request Demo</a>
+</nav>
+
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-grid-bg"></div>
+
+  <div class="hero-stats">
+    <div class="hero-stat-item">GRC / RegTech Global &nbsp;<strong>$20–24B</strong></div>
+    <div class="hero-stat-item">Fraud Analytics USA &nbsp;&nbsp;&nbsp;<strong>$9.6B</strong></div>
+    <div class="hero-stat-item">Audit Automation &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1.35B</strong></div>
+    <div class="hero-stat-item">Mid-market gap &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Massive</strong></div>
+  </div>
+
+  <div class="container-kore">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      <span class="hero-eyebrow">Compliance Intelligence OS · Now in Preview</span>
+    </div>
+
+    <h1 class="hero-title">
+      From<br>
+      <em>Regulation</em><br>
+      to Execution
+    </h1>
+
+    <p class="hero-sub">
+      The no-code cloud platform that transforms regulations, contracts,
+      audits, and operational processes into living, executable software —
+      traceable, auditable, and AI-assisted.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary-kore">Request Early Access</a>
+      <a href="#platform" class="btn-ghost-kore">Explore Platform</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ TICKER ═══════════════════════ -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <!-- duplicated for seamless loop -->
+    <span class="ticker-item">CMMC 2.0 <span>→</span> Automated</span>
+    <span class="ticker-item">HIPAA Audit <span>→</span> Continuous</span>
+    <span class="ticker-item">Construction Permitting <span>→</span> Live Module</span>
+    <span class="ticker-item">Benford Analytics <span>→</span> Built-in</span>
+    <span class="ticker-item">BSA / AML <span>→</span> No-Code</span>
+    <span class="ticker-item">Due Diligence <span>→</span> Days Not Months</span>
+    <span class="ticker-item">PE Portfolio Compliance <span>→</span> Centralized</span>
+    <span class="ticker-item">FAR Anomaly Detection <span>→</span> Real-Time</span>
+    <span class="ticker-item">CMMC 2.0 <span>→</span> Automated</span>
+    <span class="ticker-item">HIPAA Audit <span>→</span> Continuous</span>
+    <span class="ticker-item">Construction Permitting <span>→</span> Live Module</span>
+    <span class="ticker-item">Benford Analytics <span>→</span> Built-in</span>
+    <span class="ticker-item">BSA / AML <span>→</span> No-Code</span>
+    <span class="ticker-item">Due Diligence <span>→</span> Days Not Months</span>
+    <span class="ticker-item">PE Portfolio Compliance <span>→</span> Centralized</span>
+    <span class="ticker-item">FAR Anomaly Detection <span>→</span> Real-Time</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════ STATS ═══════════════════════ -->
+<section>
+  <div class="container-kore">
+    <div class="row g-0">
+      <div class="col-6 col-md-3">
+        <div class="stat-block fade-up">
+          <div class="stat-num">$20<em>B+</em></div>
+          <div class="stat-desc">GRC / RegTech<br>Global Market 2025</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-block fade-up fade-up-delay-1">
+          <div class="stat-num">21<em>%</em></div>
+          <div class="stat-desc">Fraud Analytics<br>CAGR 2024–2030</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-block fade-up fade-up-delay-2">
+          <div class="stat-num">50–<em>2K</em></div>
+          <div class="stat-desc">Employees — the<br>Mid-market sweet spot</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-block fade-up fade-up-delay-3">
+          <div class="stat-num">15<em>+</em></div>
+          <div class="stat-desc">Regulated verticals<br>addressable day one</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="divider">
+</section>
+
+
+<!-- ═══════════════════════ PROBLEM ═══════════════════════ -->
+<section class="section-xl" id="problem">
+  <div class="container-kore">
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-4 fade-up">
+        <div class="section-label">The Problem</div>
+        <h2 class="section-title">Obligations aren't connected to<br><em>operations.</em></h2>
+        <p style="font-size:0.88rem;color:var(--text-muted);font-weight:300;line-height:1.7;margin-top:1.5rem;">
+          Most regulated organizations operate with compliance fragmented across PDFs, spreadsheets,
+          emails, and disconnected tools. Every obligation exists — but none of them execute.
+        </p>
+        <div style="margin-top:2rem;">
+          <blockquote class="pull-quote" style="font-size:1.1rem;">
+            Every norm, contract, audit, and process can be described — so it can also be converted into software.
+          </blockquote>
+        </div>
+      </div>
+      <div class="col-lg-8 fade-up fade-up-delay-1">
+        <table class="problem-table">
+          <thead>
+            <tr>
+              <th>Area</th>
+              <th>Typical State</th>
+              <th>Consequence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Regulations</td>
+              <td>PDFs, official sites, legal guides, consultants</td>
+              <td class="consequence">Can't translate into actions, owners, or evidence</td>
+            </tr>
+            <tr>
+              <td>Internal Processes</td>
+              <td>Emails, Excel, loose tasks, tribal knowledge</td>
+              <td class="consequence">No traceability, measurement, or reuse</td>
+            </tr>
+            <tr>
+              <td>Documents & Contracts</td>
+              <td>Word/PDF, signatures, passive DMS folders</td>
+              <td class="consequence">Document doesn't execute logic or capture data</td>
+            </tr>
+            <tr>
+              <td>Audit & Risk</td>
+              <td>Manual sampling, rigid models, reactive prep</td>
+              <td class="consequence">High cost, low frequency, incomplete evidence</td>
+            </tr>
+            <tr>
+              <td>Generative AI</td>
+              <td>Assistants that answer questions</td>
+              <td class="consequence">Responds, but doesn't model, execute, or control</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════ HOW IT WORKS ═══════════════════════ -->
+<section class="section-xl" id="how">
+  <div class="container-kore">
+    <div class="row g-5">
+      <div class="col-lg-5 fade-up">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title">Five steps from norm to<br><em>running module.</em></h2>
+        <p style="font-size:0.88rem;color:var(--text-muted);font-weight:300;line-height:1.7;margin-top:1.5rem;">
+          KoreVol converts any regulation, internal process, or operational obligation into
+          a fully executable, traceable, no-code module — in a fraction of the time it takes
+          to build custom software.
+        </p>
+
+        <!-- VIDEO PLACEHOLDER -->
+        <div class="video-placeholder mt-4" style="aspect-ratio:16/10;">
+          <div class="play-btn">
+            <svg width="16" height="18" viewBox="0 0 16 18"><polygon points="0,0 16,9 0,18"/></svg>
+          </div>
+          <span class="video-label">Platform walkthrough · 3 min</span>
+        </div>
+      </div>
+
+      <div class="col-lg-7 fade-up fade-up-delay-1">
+        <div class="step-item">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h4>Semantic Capture</h4>
+            <p>Upload a regulation, policy, contract, standard, or describe a business flow in plain language. KoreVol parses the content semantically to extract its structure.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h4>Operational Decomposition</h4>
+            <p>KoreVol identifies obligations, required data, owners, states, evidence needs, controls, deadlines, and outputs — automatically decomposed into operationalizable components.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h4>No-Code Module Builder</h4>
+            <p>Convert that structure into forms, intelligent documents, rules, approval flows, and reusable modules — entirely without programming. Edit and adapt in real time.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h4>Continuous Execution</h4>
+            <p>The system guides users, assigns tasks, collects evidence, tracks deadlines, and keeps the operational record live — automatically, every day.</p>
+          </div>
+        </div>
+        <div class="step-item" style="border:none;">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <h4>Audit-Ready Analytics</h4>
+            <p>KoreVol analyzes risks, anomalies, compliance gaps, and evidence quality — generating inspection-ready reports, audit trails, and continuous fraud signals.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════ PLATFORM MODULES ═══════════════════════ -->
+<section class="section-xl" id="platform">
+  <div class="container-kore">
+    <div class="row mb-5">
+      <div class="col-lg-6 fade-up">
+        <div class="section-label">Platform Architecture</div>
+        <h2 class="section-title">One core. Unlimited<br><em>vertical modules.</em></h2>
+      </div>
+      <div class="col-lg-6 d-flex align-items-end fade-up fade-up-delay-1">
+        <p style="font-size:0.88rem;color:var(--text-muted);font-weight:300;line-height:1.7;">
+          KoreVol is built as a horizontal platform with vertical depth. The same core technology
+          powers every module — each vertical module adds specialized domain logic, templates,
+          regulatory maps, and pre-built evidence structures.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6 col-lg-4 fade-up">
+        <div class="module-card">
+          <div class="module-tag">KoreFlow</div>
+          <div class="module-name">Process Engine</div>
+          <p class="module-desc">No-code workflow engine built on deterministic finite automata. Model any lifecycle — contracts, audits, inspections, permits, certifications — with full state control.</p>
+          <ul class="module-features">
+            <li>Deterministic state machines</li>
+            <li>Multi-actor approval flows</li>
+            <li>Conditional branching</li>
+            <li>Deadline & escalation engine</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-1">
+        <div class="module-card">
+          <div class="module-tag">KoreDocs</div>
+          <div class="module-name">Intelligent Documents</div>
+          <p class="module-desc">Documents that are not passive files. They capture data, execute logic, validate information, change state, and produce structured outputs automatically.</p>
+          <ul class="module-features">
+            <li>Data-capturing smart forms</li>
+            <li>Logic execution inside docs</li>
+            <li>Auto-generated structured outputs</li>
+            <li>Version-controlled evidence</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-2">
+        <div class="module-card">
+          <div class="module-tag">KoreReg</div>
+          <div class="module-name">Regulation-as-Code</div>
+          <p class="module-desc">Upload any regulation, standard, policy, or certification requirement. KoreReg translates it into controls, tasks, evidence requirements, forms, and audit trails.</p>
+          <ul class="module-features">
+            <li>Semantic norm parsing</li>
+            <li>Auto-generated control matrices</li>
+            <li>CMMC · HIPAA · FAR · BSA ready</li>
+            <li>Living normative maps</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-3">
+        <div class="module-card">
+          <div class="module-tag">KoreAudit</div>
+          <div class="module-name">Audit Automation</div>
+          <p class="module-desc">Pre-audit preparation, continuous evidence collection, parametric balance modeling, risk assessment workflows, and due diligence automation — all in one engine.</p>
+          <ul class="module-features">
+            <li>ISA 315 / NIA-ES 315 aligned</li>
+            <li>Parametric balance sheets</li>
+            <li>Evidence gap analysis</li>
+            <li>Audit trail generation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-4">
+        <div class="module-card">
+          <div class="module-tag">KoreRisk</div>
+          <div class="module-name">Risk & Fraud Analytics</div>
+          <p class="module-desc">Deterministic mathematical fraud detection — not black-box AI. Benford's Law, duplicate detection, round-number analysis, risk scoring, and anomaly alerts.</p>
+          <ul class="module-features">
+            <li>Benford's Law applied</li>
+            <li>Duplicate & round-number flags</li>
+            <li>Weighted risk matrices</li>
+            <li>Real-time SAR signals</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-5">
+        <div class="module-card">
+          <div class="module-tag">KoreHub</div>
+          <div class="module-name">Enterprise Filesystem</div>
+          <p class="module-desc">Document repository with permissions, full traceability, cloud sync (Google Drive, OneDrive, S3, SharePoint), and a structured evidence vault per process.</p>
+          <ul class="module-features">
+            <li>Granular role permissions</li>
+            <li>Cloud sync & governance</li>
+            <li>Evidence vault per workflow</li>
+            <li>External auditor access</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal callout -->
+    <div class="row mt-5 fade-up">
+      <div class="col-lg-7">
+        <div class="hero-terminal">
+          <span class="t-line-accent">$ korevol create-module --from "CMMC 2.0 Level 2"</span><br>
+          <span class="t-line-muted">→ Parsing 110 NIST SP 800-171 controls...</span><br>
+          <span class="t-line-muted">→ Mapping to evidence requirements...</span><br>
+          <span class="t-line-muted">→ Generating SSP + POA&M workflow...</span><br>
+          <span class="t-line-accent">✓ Module ready: cmmc-level2-readiness</span><br>
+          <span class="t-line-muted">   Controls: 110 · Forms: 47 · Evidence slots: 230 · Owners: configurable</span><br>
+          <span class="t-line-muted">   Est. configuration: </span><span class="t-line-accent">4 hours</span><span class="t-line-muted"> vs 6 months custom dev</span><br>
+          <span>$&nbsp;<span class="cursor"></span></span>
+        </div>
+      </div>
+      <div class="col-lg-5 d-flex align-items-center fade-up fade-up-delay-1">
+        <div>
+          <p style="font-family:var(--mono);font-size:0.7rem;color:var(--text-dim);letter-spacing:0.08em;margin-bottom:0.75rem;text-transform:uppercase;">KoreVol vs. The Alternatives</p>
+          <table class="compare-table" style="font-size:0.8rem;">
+            <thead>
+              <tr>
+                <th>Capability</th>
+                <th>Enterprise GRC</th>
+                <th>Excel/Manual</th>
+                <th class="kore">KoreVol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Regulation-as-Code</td>
+                <td class="partial">Partial</td>
+                <td class="no">✕</td>
+                <td class="yes">✓</td>
+              </tr>
+              <tr>
+                <td>No-Code Module Builder</td>
+                <td class="no">✕</td>
+                <td class="no">✕</td>
+                <td class="yes">✓</td>
+              </tr>
+              <tr>
+                <td>Fraud Analytics (Benford)</td>
+                <td class="partial">$$$</td>
+                <td class="no">✕</td>
+                <td class="yes">✓</td>
+              </tr>
+              <tr>
+                <td>Continuous Evidence</td>
+                <td class="partial">Partial</td>
+                <td class="no">✕</td>
+                <td class="yes">✓</td>
+              </tr>
+              <tr>
+                <td>Mid-Market Pricing</td>
+                <td class="no">✕</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+
+<!-- ═══════════════════════ SOLUTIONS ═══════════════════════ -->
+<section class="section-xl" id="solutions">
+  <div class="container-kore">
+    <div class="row mb-5">
+      <div class="col-lg-5 fade-up">
+        <div class="section-label">Use Cases</div>
+        <h2 class="section-title">Built for regulated<br><em>industries.</em></h2>
+      </div>
+      <div class="col-lg-7 d-flex align-items-end fade-up fade-up-delay-1">
+        <p style="font-size:0.88rem;color:var(--text-muted);font-weight:300;line-height:1.7;">
+          KoreVol ships pre-built vertical modules for the highest-value regulated markets.
+          Each module includes regulatory maps, control frameworks, document templates,
+          evidence structures, and fraud analytics — ready to deploy.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <!-- Card 1 -->
+      <div class="col-md-6 col-lg-4 fade-up">
+        <div class="solution-card">
+          <div class="solution-vertical">Government Contractors</div>
+          <div class="solution-title">CMMC 2.0 &amp; FAR Compliance Platform</div>
+          <p class="solution-pain">
+            300,000+ DoD suppliers must certify under CMMC 2.0. Most manage 110 NIST controls in spreadsheets.
+            KoreVol generates SSPs, POA&amp;Ms, evidence repositories, and SPRS affirmation workflows — without consultants.
+          </p>
+          <div class="solution-modules">
+            <span>KoreReg</span><span>KoreAudit</span><span>KoreDocs</span><span>KoreRisk</span>
+          </div>
+          <div class="solution-tam">
+            <div>
+              <div class="tam-val">$10B</div>
+              <div class="tam-label">Addressable TAM</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--accent);">30–60 day sales cycle</div>
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim);">$15–40K ACV</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-1">
+        <div class="solution-card">
+          <div class="solution-vertical">Healthcare Mid-Market</div>
+          <div class="solution-title">Billing Fraud Detection &amp; HIPAA Audit Automation</div>
+          <p class="solution-pain">
+            Medical groups can't afford Epic compliance modules or Big Four audits.
+            KoreVol provides Benford-based billing fraud detection, HIPAA risk matrices,
+            OIG self-disclosure workflows, and BAA contract management at mid-market price.
+          </p>
+          <div class="solution-modules">
+            <span>KoreRisk</span><span>KoreAudit</span><span>KoreReg</span><span>KoreDocs</span>
+          </div>
+          <div class="solution-tam">
+            <div>
+              <div class="tam-val">$3.8B</div>
+              <div class="tam-label">Projected 2025</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--accent);">45–90 day sales cycle</div>
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim);">$12–30K ACV</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-2">
+        <div class="solution-card">
+          <div class="solution-vertical">Private Equity</div>
+          <div class="solution-title">Portfolio Compliance &amp; Due Diligence OS</div>
+          <p class="solution-pain">
+            A single PE firm with 15–30 portfolio companies can deploy KoreVol across the entire portfolio.
+            100-day compliance onboarding, M&amp;A due diligence workflows, side-letter management, and
+            centralized risk matrices — all in one workspace.
+          </p>
+          <div class="solution-modules">
+            <span>KoreFlow</span><span>KoreAudit</span><span>KoreRisk</span><span>KoreHub</span>
+          </div>
+          <div class="solution-tam">
+            <div>
+              <div class="tam-val">$4B</div>
+              <div class="tam-label">Addressable TAM</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--accent);">30–60 day sales cycle</div>
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim);">$25–80K ACV</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-3">
+        <div class="solution-card">
+          <div class="solution-vertical">Community Banks &amp; Credit Unions</div>
+          <div class="solution-title">BSA/AML, Vendor Risk &amp; Exam Preparation</div>
+          <p class="solution-pain">
+            4,500+ community banks operate BSA/AML programs with legacy systems generating massive false-positive rates.
+            KoreVol delivers Benford analytics for SAR filing, vendor risk management, FDIC/NCUA exam preparation, and contract tracking.
+          </p>
+          <div class="solution-modules">
+            <span>KoreRisk</span><span>KoreReg</span><span>KoreDocs</span><span>KoreFlow</span>
+          </div>
+          <div class="solution-tam">
+            <div>
+              <div class="tam-val">$5B</div>
+              <div class="tam-label">Addressable TAM</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--accent);">60–90 day sales cycle</div>
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim);">$8–20K ACV</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-4">
+        <div class="solution-card">
+          <div class="solution-vertical">Construction &amp; Real Estate</div>
+          <div class="solution-title">Permitting-as-Code &amp; Construction Fraud Platform</div>
+          <p class="solution-pain">
+            Lien waivers, subcontractor compliance, certified payroll, OSHA trails,
+            and Davis-Bacon audits — all manual. KoreVol converts local permitting regulations
+            into executable modules with document generation, evidence, and Benford-based billing fraud detection.
+          </p>
+          <div class="solution-modules">
+            <span>KoreReg</span><span>KoreFlow</span><span>KoreRisk</span><span>KoreDocs</span>
+          </div>
+          <div class="solution-tam">
+            <div>
+              <div class="tam-val">$874M</div>
+              <div class="tam-label">Construction Risk USA</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--accent);">30–45 day sales cycle</div>
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim);">$6–18K ACV</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="col-md-6 col-lg-4 fade-up fade-up-delay-5">
+        <div class="solution-card">
+          <div class="solution-vertical">CPA &amp; Law Firms</div>
+          <div class="solution-title">Audit QC, Risk Assessment &amp; Client Workflow Platform</div>
+          <p class="solution-pain">
+            PCAOB QC 1000 effective 2025 intensifies peer review requirements.
+            KoreVol automates ISA 315 risk assessments, engagement evidence repositories,
+            client acceptance workflows, and QC documentation — positioning CPA firms as
+            a distribution channel to their own clients.
+          </p>
+          <div class="solution-modules">
+            <span>KoreAudit</span><span>KoreRisk</span><span>KoreFlow</span><span>KoreHub</span>
+          </div>
+          <div class="solution-tam">
+            <div>
+              <div class="tam-val">$2B</div>
+              <div class="tam-label">CPA / Law Firms TAM</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--accent);">30–60 day sales cycle</div>
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim);">$8–25K ACV</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image placeholder: solution demo -->
+    <div class="row mt-5 fade-up">
+      <div class="col-12">
+        <div class="img-placeholder" style="height:320px;">
+          <svg width="36" height="36" fill="none" stroke="var(--text-dim)" stroke-width="1" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+          <div class="inner-label">Platform Screenshot — Solution Dashboard<br>Replace with actual product screenshot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════ PULL QUOTE ═══════════════════════ -->
+<section class="section-lg" style="background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container-kore">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 text-center fade-up">
+        <p style="font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem;">The KoreVol Thesis</p>
+        <blockquote class="pull-quote" style="border:none;padding:0;text-align:center;font-size:clamp(1.6rem,3.5vw,2.8rem);">
+          KoreVol does for regulated operations what Stripe did for payments:
+          it makes enterprise-grade compliance, audit, and process automation
+          <em>programmable, reusable, and accessible to the mid-market.</em>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ MARKETPLACE ═══════════════════════ -->
+<section class="section-xl" id="marketplace">
+  <div class="container-kore">
+    <div class="row mb-5">
+      <div class="col-lg-5 fade-up">
+        <div class="section-label">Module Marketplace</div>
+        <h2 class="section-title">Hyper-personalized<br><em>vertical modules.</em></h2>
+      </div>
+      <div class="col-lg-7 d-flex align-items-end fade-up fade-up-delay-1">
+        <p style="font-size:0.88rem;color:var(--text-muted);font-weight:300;line-height:1.7;">
+          Every KoreVol vertical module is a plug-and-play compliance and operational system.
+          Built on the same core, each module is hyper-configured for its sector — with regulatory maps,
+          evidence templates, fraud patterns, and workflow logic pre-loaded. Partners can also
+          publish their own modules to the marketplace.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-7 fade-up">
+        <div style="border-top:1px solid var(--border);">
+          <div class="market-row">
+            <div>
+              <div class="market-name">CMMC 2.0 Readiness Platform</div>
+              <div class="market-tags"><span class="market-tag">Government</span><span class="market-tag">Defense</span><span class="market-tag">NIST 800-171</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$15–40K / yr</div>
+              <div class="market-score">9.5 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">Healthcare Billing Fraud &amp; HIPAA Audit</div>
+              <div class="market-tags"><span class="market-tag">Healthcare</span><span class="market-tag">HIPAA</span><span class="market-tag">OIG</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$12–30K / yr</div>
+              <div class="market-score">9.3 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">PE Portfolio Compliance &amp; Due Diligence</div>
+              <div class="market-tags"><span class="market-tag">Private Equity</span><span class="market-tag">M&amp;A</span><span class="market-tag">SEC</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$25–80K / yr</div>
+              <div class="market-score">9.1 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">Community Bank BSA/AML &amp; Exam Prep</div>
+              <div class="market-tags"><span class="market-tag">Banking</span><span class="market-tag">BSA</span><span class="market-tag">FDIC</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$8–20K / yr</div>
+              <div class="market-score">8.5 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">CPA Firm Audit QC &amp; Risk Assessment</div>
+              <div class="market-tags"><span class="market-tag">Accounting</span><span class="market-tag">PCAOB</span><span class="market-tag">ISA 315</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$8–25K / yr</div>
+              <div class="market-score">8.4 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">Construction Permitting-as-Code</div>
+              <div class="market-tags"><span class="market-tag">Construction</span><span class="market-tag">Permitting</span><span class="market-tag">OSHA</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$6–18K / yr</div>
+              <div class="market-score">8.2 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">Nonprofit Grant Compliance &amp; Single Audit</div>
+              <div class="market-tags"><span class="market-tag">Nonprofit</span><span class="market-tag">OMB</span><span class="market-tag">Form 990</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$4–12K / yr</div>
+              <div class="market-score">7.9 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">Insurance Claims Fraud &amp; License Tracking</div>
+              <div class="market-tags"><span class="market-tag">Insurance</span><span class="market-tag">NAIC</span><span class="market-tag">Benford</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$15–40K / yr</div>
+              <div class="market-score">7.8 / 10</div>
+            </div>
+          </div>
+          <div class="market-row">
+            <div>
+              <div class="market-name">Manufacturing ISO/QMS &amp; Supplier Fraud</div>
+              <div class="market-tags"><span class="market-tag">Manufacturing</span><span class="market-tag">ISO 9001</span><span class="market-tag">FDA</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$10–30K / yr</div>
+              <div class="market-score">7.5 / 10</div>
+            </div>
+          </div>
+          <div class="market-row" style="border:none;">
+            <div>
+              <div class="market-name">LIHTC &amp; HUD Affordable Housing Compliance</div>
+              <div class="market-tags"><span class="market-tag">Housing</span><span class="market-tag">HUD</span><span class="market-tag">LIHTC</span></div>
+            </div>
+            <div>
+              <div class="market-acv">$6–18K / yr</div>
+              <div class="market-score">6.4 / 10</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+          <p style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim);letter-spacing:0.08em;">+ 5 more vertical modules in pipeline · Partners can submit modules · Revenue share 15–30%</p>
+        </div>
+      </div>
+
+      <div class="col-lg-5 fade-up fade-up-delay-1">
+        <!-- Module builder callout -->
+        <div style="border:1px solid var(--border);border-radius:6px;padding:2rem;background:var(--bg-2);">
+          <div class="mono-accent mb-3">Build your own module</div>
+          <h3 style="font-family:var(--serif);font-size:1.6rem;font-weight:300;color:var(--text);letter-spacing:-0.02em;margin-bottom:1rem;">Any process. Any regulation. Any vertical.</h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);font-weight:300;line-height:1.7;margin-bottom:1.5rem;">
+            KoreVol's Semantic Module Builder lets any organization — or any consulting partner —
+            convert their own regulatory knowledge into a deployable, reusable module.
+            No developers required.
+          </p>
+
+          <div style="border-top:1px solid var(--border);padding-top:1.25rem;">
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div style="width:28px;height:28px;border:1px solid var(--border-light);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:0.65rem;color:var(--accent);">01</div>
+                <span style="font-size:0.85rem;color:var(--text-muted);font-weight:300;">Describe your regulation or process in plain language</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div style="width:28px;height:28px;border:1px solid var(--border-light);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:0.65rem;color:var(--accent);">02</div>
+                <span style="font-size:0.85rem;color:var(--text-muted);font-weight:300;">KoreVol decomposes it into controls, forms, states, and evidence</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div style="width:28px;height:28px;border:1px solid var(--border-light);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:0.65rem;color:var(--accent);">03</div>
+                <span style="font-size:0.85rem;color:var(--text-muted);font-weight:300;">Configure visually, test, publish, and share or sell your module</span>
+              </div>
+            </div>
+          </div>
+
+          <a href="#cta" class="btn-primary-kore d-inline-block mt-4" style="font-size:0.7rem;">Build a Custom Module</a>
+        </div>
+
+        <!-- Image placeholder: marketplace UI -->
+        <div class="img-placeholder mt-3" style="height:200px;">
+          <svg width="30" height="30" fill="none" stroke="var(--text-dim)" stroke-width="1" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <div class="inner-label">Module Marketplace UI<br>Replace with product screenshot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+
+<!-- ═══════════════════════ PRICING ═══════════════════════ -->
+<section class="section-xl" id="pricing">
+  <div class="container-kore">
+    <div class="row mb-5">
+      <div class="col-lg-5 fade-up">
+        <div class="section-label">Pricing</div>
+        <h2 class="section-title">Enterprise-grade.<br><em>Mid-market price.</em></h2>
+      </div>
+      <div class="col-lg-7 d-flex align-items-end fade-up fade-up-delay-1">
+        <p style="font-size:0.88rem;color:var(--text-muted);font-weight:300;line-height:1.7;">
+          KoreVol combines SaaS subscription, vertical modules, and analytics add-ons.
+          Start with one obligation. Expand to the entire organization.
+          No Big Four consulting budget required.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6 col-lg-3 fade-up">
+        <div class="price-card">
+          <div class="price-tier">Core Platform</div>
+          <div class="price-amount">$12K</div>
+          <div class="price-period">per year · starting</div>
+          <ul class="price-features">
+            <li class="included">Workspace + users + roles</li>
+            <li class="included">KoreFlow workflow engine</li>
+            <li class="included">KoreDocs smart docs</li>
+            <li class="included">KoreHub filesystem</li>
+            <li>Vertical modules (add-on)</li>
+            <li>Risk & fraud analytics (add-on)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up fade-up-delay-1">
+        <div class="price-card featured">
+          <div class="price-tier" style="color:var(--accent);">Core + Vertical</div>
+          <div class="price-amount">$25K</div>
+          <div class="price-period">per year · most popular</div>
+          <ul class="price-features">
+            <li class="included">Everything in Core</li>
+            <li class="included">1 vertical module included</li>
+            <li class="included">KoreReg normative engine</li>
+            <li class="included">KoreAudit pre-audit flows</li>
+            <li class="included">Implementation support</li>
+            <li>Risk & fraud analytics (add-on)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up fade-up-delay-2">
+        <div class="price-card">
+          <div class="price-tier">Full Suite</div>
+          <div class="price-amount">$45K</div>
+          <div class="price-period">per year · full access</div>
+          <ul class="price-features">
+            <li class="included">Everything in Core + Vertical</li>
+            <li class="included">KoreRisk fraud analytics</li>
+            <li class="included">Benford + anomaly detection</li>
+            <li class="included">2 vertical modules included</li>
+            <li class="included">SSO + advanced permissions</li>
+            <li class="included">Priority support</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up fade-up-delay-3">
+        <div class="price-card">
+          <div class="price-tier">Enterprise / PE</div>
+          <div class="price-amount">Custom</div>
+          <div class="price-period">per fund or org</div>
+          <ul class="price-features">
+            <li class="included">Multi-entity deployment</li>
+            <li class="included">Unlimited vertical modules</li>
+            <li class="included">Data residency options</li>
+            <li class="included">ISO / SOC2 readiness</li>
+            <li class="included">Dedicated CSM</li>
+            <li class="included">Partner / white-label program</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4 fade-up">
+      <div class="col-12">
+        <p style="font-family:var(--mono);font-size:0.63rem;color:var(--text-dim);letter-spacing:0.08em;text-align:center;">
+          Pricing ranges are indicative and subject to validation through pilots. Implementation / onboarding available as one-off: $5K–$50K. Add-on modules: $6K–$40K/yr each. Risk &amp; Fraud Analytics add-on: $5K–$25K/yr.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+
+<!-- ═══════════════════════ CTA ═══════════════════════ -->
+<section class="cta-section" id="cta">
+  <div class="container-kore">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 fade-up">
+        <p style="font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem;">Every obligation can become software.</p>
+        <h2 class="cta-title">
+          Stop managing compliance.<br>
+          Start <em>executing</em> it.
+        </h2>
+        <p style="font-size:0.95rem;color:var(--text-muted);font-weight:300;max-width:540px;margin:0 auto 2.5rem;line-height:1.7;">
+          KoreVol is in early access. Join the waitlist to be among the first organizations
+          to convert your regulations, audits, and processes into living, executable software.
+        </p>
+        <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+          <a href="#" class="btn-primary-kore" style="font-size:0.8rem;padding:0.9rem 2.2rem;">Request Early Access</a>
+          <a href="#" class="btn-ghost-kore" style="font-size:0.8rem;padding:0.9rem 2.2rem;">Talk to the Team</a>
+        </div>
+        <div style="margin-top:2.5rem;display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <div style="font-family:var(--serif);font-size:1.8rem;font-weight:300;color:var(--text);">No</div>
+            <div style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;">Dev Required</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:var(--serif);font-size:1.8rem;font-weight:300;color:var(--text);">Days</div>
+            <div style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;">Not Months</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:var(--serif);font-size:1.8rem;font-weight:300;color:var(--text);">100%</div>
+            <div style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;">Audit Traceable</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:var(--serif);font-size:1.8rem;font-weight:300;color:var(--text);">Mid</div>
+            <div style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;">Market Price</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="kore-footer">
+  <div class="container-kore">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <div class="footer-logo"><span></span>KoreVol</div>
+        <p class="footer-tagline">From Regulation to Execution</p>
+        <p style="font-size:0.8rem;color:var(--text-dim);font-weight:300;line-height:1.7;max-width:320px;">
+          The no-code Compliance Intelligence OS for regulated organizations.
+          Convert any norm, contract, audit, or process into living software.
+        </p>
+      </div>
+      <div class="col-6 col-lg-2">
+        <p style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;">Platform</p>
+        <ul class="footer-links">
+          <li><a href="#platform">KoreFlow</a></li>
+          <li><a href="#platform">KoreDocs</a></li>
+          <li><a href="#platform">KoreReg</a></li>
+          <li><a href="#platform">KoreAudit</a></li>
+          <li><a href="#platform">KoreRisk</a></li>
+          <li><a href="#platform">KoreHub</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <p style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;">Solutions</p>
+        <ul class="footer-links">
+          <li><a href="#solutions">Gov. Contractors</a></li>
+          <li><a href="#solutions">Healthcare</a></li>
+          <li><a href="#solutions">Private Equity</a></li>
+          <li><a href="#solutions">Community Banks</a></li>
+          <li><a href="#solutions">Construction</a></li>
+          <li><a href="#solutions">CPA Firms</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <p style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;">Company</p>
+        <ul class="footer-links">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Investor Brief</a></li>
+          <li><a href="#">Partner Program</a></li>
+          <li><a href="#">Marketplace</a></li>
+          <li><a href="#cta">Request Demo</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <p style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;">Legal</p>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Security</a></li>
+          <li><a href="#">Data Residency</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 KoreVol · Compliance Intelligence OS · All rights reserved</span>
+      <span class="footer-copy">Built for the regulated mid-market · USA · Global</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Intersection Observer for fade-up animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Smooth nav highlighting
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 80;
+      const sectionHeight = section.offsetHeight;
+      if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+        navLinks.forEach(link => {
+          link.style.color = '';
+          if (link.getAttribute('href') === '#' + section.id) {
+            link.style.color = 'var(--text)';
+          }
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>
